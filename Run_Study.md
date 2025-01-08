@@ -46,3 +46,30 @@ Enter your guess (1-100): 60
 Congratulations! You guessed the number.
 ```
 <img width="750" alt="스크린샷 2025-01-08 오후 3 20 02" src="https://github.com/user-attachments/assets/dfdabea4-44eb-4edb-9e5f-4efd70642426" />
+
+<h2>구구단</h2>
+- 이중 반복문을 사용하여 2단부터 9단까지의 구구단을 출력하는 프로그램을 작성하세요. 각 단은 1부터 9까지 곱하여 결과를 출력해야 합니다.
+    - **구구단 세로로 출력해 주세요**
+        - 출력 예시
+        
+        ```csharp
+        2 x 1 = 2    3 x 1 = 3    4 x 1 = 4    ...   9 x 1 = 9
+        2 x 2 = 4    3 x 2 = 6    4 x 2 = 8    ...   9 x 2 = 18
+        ...
+        2 x 9 = 18   3 x 9 = 27   4 x 9 = 36   ...   9 x 9 = 81
+        ```
+  <img width="1003" alt="스크린샷 2025-01-08 오후 3 37 09" src="https://github.com/user-attachments/assets/0232ff78-26ed-45e9-9386-698039e23da7" />
+  
+    - **구구단 가로로 출력해 주세요**
+
+        - 출력 예시
+        
+        ```csharp
+        2 x 1 = 2    2 x 2 = 4    2 x 3 = 6    ...   2 x 9 = 18
+
+        3 x 1 = 3    3 x 2 = 6    3 x 3 = 9    ...   3 x 9 = 27
+        ...
+        9 x 1 = 9    9 x 2 = 18   9 x 3 = 27   ...   9 x 9 = 81
+        
+        ```
+   <img width="523" alt="스크린샷 2025-01-08 오후 3 39 19" src="https://github.com/user-attachments/assets/52a31d0a-cd3c-4965-87a5-be2a3ed4b432" />
