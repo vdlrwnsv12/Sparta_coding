@@ -19,8 +19,9 @@
     - `Console.WriteLine();` 을 사용해 최대값과 최소값을 각각 출력할 수 있습니다.
 
 int[] numbers = { 10, 20, 30, 40, 50 };
-int max = numbers[0];
-int min = numbers[0];
+int max = numbers[0]; //max값을 10으로 초기화
+int min = numbers[0]; //min 값을 10으로 초기화
+
 
 foreach (int number in numbers)
 {
