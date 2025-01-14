@@ -18,4 +18,23 @@
 - `int[] numbers = { 10, 20, 30, 40, 50 };` **이와 같이** **주어진 숫자 배열에서 최대값과 최소값을 찾는 프로그램을 작성하세요.**
     - `Console.WriteLine();` 을 사용해 최대값과 최소값을 각각 출력할 수 있습니다.
 
-<img width="1219" alt="스크린샷 2025-01-14 오후 3 21 58" src="https://github.com/user-attachments/assets/98b378fa-c719-4b40-8bae-dd83e41495de" />
+int[] numbers = { 10, 20, 30, 40, 50 };
+int max = numbers[0];
+int min = numbers[0];
+
+foreach (int number in numbers)
+{
+    if (number > max)
+        max = number;
+
+    if (number < min)
+        min = number;
+}
+
+Console.WriteLine($"max: {max}");
+Console.WriteLine($"min: {min}");
+
+ㅡㅡㅡㅡㅡㅡㅡㅡ
+결과
+max: 50
+min: 10
