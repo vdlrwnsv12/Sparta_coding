@@ -1,0 +1,195 @@
+게임 매니저 코드
+public class GameManager : MonoBehaviour
+{
+    public static GameManager Instance;
+
+    public GameObject producer;
+
+    
+    [NonSerialized] public Card firstCard;
+    [NonSerialized] public Card secondCard;
+
+    public Text timeTxt;
+
+    public GameObject endTxt;    
+
+    AudioSource audioSource;
+    public AudioClip matchAudio;
+    public AudioClip successAudio;
+    public AudioClip failureAudio;
+
+    public int cardCount = 0;   
+    float time = 0.0f;
+       
+        public bool isClear = false;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+    }
+    void Start()
+    {
+                isClear = false;
+        Time.timeScale = 1.0f; 
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    void Update()
+    {
+        if (isClear)
+                return;
+
+        if (time < 30.0f)
+        {
+            time += Time.deltaTime;
+            timeTxt.text = time.ToString("N2");
+
+                if (time >= 30.0f)
+		        audioSource.PlayOneShot(failureAudio);
+
+	}
+	else
+        {
+                endTxt.SetActive(true);
+                AudioManager.Instance.StopAudio();
+		Time.timeScale = 0.0f;  // ���� 
+                
+
+	}
+}
+    public void Matched()
+    {
+        if (firstCard.idx == secondCard.idx)
+        {
+            // ����
+            // �̶� ���⼭ �ٷ� Destroy�� ȣ������ �ʰ�, Card Ŭ�������� ���� �����Լ��� ����Ѵ�
+            // ��Ȱ��ȭ�� ī��� cardPool�� �߰�
+            audioSource.PlayOneShot(matchAudio);
+
+            firstCard.DestroyCard();
+            secondCard.DestroyCard();
+
+            cardCount -= 2; 
+            if (cardCount == 0)
+            {
+                 isClear = true;
+                                // StageClear �޼��� ȣ��
+                AudioManager.Instance.StopAudio();
+                                audioSource.PlayOneShot(successAudio);
+				// ���� ���������� �ϳ��� �����, ���������� ���� �������� ������ �����ִ� ������ �ϸ� ���� ��
+		Invoke("ShowProducerInvoke", 1.0f); // 1�� �Ŀ� ������ ���� �����ֱ�
+                // ������ ���� ������ ���Ѵ�
+
+                // endTxt�� ��ġ�� ���� �ٲ���
+                //endTxt.SetActive(true);
+
+            }
+        }
+        else
+        {
+            // �ٽ� �������
+            // �̶� ���⼭ �ٷ� Ȱ��ȭ, ��Ȱ��ȭ���� �ʰ�, Card Ŭ�������� ���� �������Լ��� ����Ѵ�
+            firstCard.CloseCard();
+            secondCard.CloseCard();
+        }
+        // ������ �Ǿ��� �������� ���� firstCard, secondCard�� �������Ѵ�
+        firstCard = null;
+        secondCard = null;
+    }
+
+    // �������� ������ ���� �����ֱ�
+    public void ShowProducerInvoke()
+    {
+        // ������ ���Ѵ�?
+
+        producer.SetActive(true);
+    }
+}
+
+카드 코드
+------------------------------------
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Card : MonoBehaviour
+{
+    [NonSerialized] public int idx = 0;    // Board���� ������ �ε���
+
+    [SerializeField] GameObject front;    // Front
+    [SerializeField] GameObject back;     // Front
+    [SerializeField] string imagePath;
+    [SerializeField] SpriteRenderer frontImage;   // Front�� ����ִ� SpriteRenderer
+
+    AudioSource audioSource;
+    Animator anim;
+
+    public AudioClip audioclip;
+
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        anim = GetComponent<Animator>();
+        anim.SetBool("isOpen", true);//시작시 모든카드 앞면
+        Invoke("CloseCard", 1f);
+    }
+   
+   
+    
+    public void Setting(int number)
+    {
+        idx = number;
+        // �ҷ��� ī�带 front�� �����Ѵ�
+        frontImage.sprite = Resources.Load<Sprite>($"{imagePath}/image_{idx}");
+    }
+
+    public void OpenCard()
+    {
+        if (GameManager.Instance.secondCard != null) return;
+
+        audioSource.PlayOneShot(audioclip);  // AudioClip���� ��ġ�� �ʴ´�
+        anim.SetBool("isOpen", true);   // CardFlip �ִϸ��̼����� �ٲ۴�
+        //front.SetActive(true);
+        //back.SetActive(false);
+
+        // firstCard�� ����ٸ� 
+        if (GameManager.Instance.firstCard == null)
+        {
+            // firstCard�� �� ������ �Ѱ��ش�
+            GameManager.Instance.firstCard = this;
+        }
+        // firstCard�� ������� �ʴٸ� 
+        else
+        {
+            // secondCard�� �� ������ �Ѱ��ش�
+            GameManager.Instance.secondCard = this;
+
+            // Matched�Լ��� ȣ���Ѵ�
+            GameManager.Instance.Matched();
+        }
+    }
+    public void DestroyCard()
+    {
+        Invoke("DestroyCardInvoke", 1.0f);  // 1�� �� ����
+    }
+    void DestroyCardInvoke()
+    {
+        Destroy(gameObject);
+    }
+    public void CloseCard()
+    {
+        Invoke("CloseCardInvoke", 1.0f);
+    }
+    void CloseCardInvoke()
+    {
+        anim.SetBool("isOpen", false);  // CardIdle �ִϸ��̼����� �ٲ۴�
+        //front.SetActive(false);
+        //back.SetActive(true);
+    }
+}
+변경점: 카드 자체를 뒤집는 애니메이션을 사용하여 좀 더 자연스러운 카드 움직임을 추가 게임 시작시 Invoke 함수를 사용하여 2초간 카드 앞면을 보여줌
+
